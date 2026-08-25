@@ -1,0 +1,12 @@
+pytesseract 
+pillow 
+pdf2image 
+langchain-text-splitters 
+chromadb 
+langchain-community
+pillow-heif
+openai
+langchain_openai
+rank-bm25
+langchain 
+langchain-classic

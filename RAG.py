@@ -120,3 +120,6 @@ print(retrieve_and_reason(input(str('Input Prompt: '))))
 
 #if __name__ = '__main__':
 
+
+
+# CONVERT TO OOP !!

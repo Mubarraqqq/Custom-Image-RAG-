@@ -1,50 +1,65 @@
-# LexisNexis OCR RAG Prototype
-This repository contains a small OCR-to-RAG experiment built in Python.
-It extracts text from document images, chunks the result, stores embeddings, and answers questions.
-The current implementation lives in `RAG.py`.
-## Project Preview
-![Project preview](./IMG.png)
-## What The Script Does
-1. Loads environment variables from `.env`.
-2. Opens image files from a target document folder.
-3. Uses Tesseract OCR to extract text from the first five images.
-4. Splits the combined text into overlapping chunks.
-5. Builds or reuses a Chroma vector store in `chrome_db`.
-6. Combines semantic retrieval with BM25 lexical retrieval.
-7. Sends the retrieved context to `gpt-4o-mini` for final answering.
-## Dependencies
+# LexisNexis Hybrid RAG Prototype
 
-The project currently depends on OpenAI, Chroma, LangChain, Pillow, and Tesseract-related packages.
-Install the Python requirements with:
+This repository now centers on a small retrieval-augmented QA workflow built on structured JSON data.
+The earlier OCR logic has been split into its own helper script, while the main app focuses on retrieval and answer generation.
+
+## Project Preview
+
+![Project preview](./IMG.png)
+
+## Current Architecture
+
+- `RAG.py` loads `main_data.json`, creates LangChain `Document` objects, stores embeddings in Chroma, and answers prompts with `gpt-4o-mini`.
+- `image_extract.py` is a standalone OCR helper for extracting text from image files with Tesseract.
+- `main_data.json` is the knowledge base currently queried by the app.
+- `chrome_db/` stores the persisted vector database locally.
+
+## How `RAG.py` Works
+
+1. Loads the OpenAI API key from `.env`.
+2. Reads the structured question/answer pairs from `main_data.json`.
+3. Converts each JSON entry into a `Document` with `page_number` metadata.
+4. Builds or reuses a local Chroma vector store in `chrome_db/`.
+5. Creates a hybrid retriever using semantic search plus BM25 lexical search.
+6. Retrieves the top matches for a user query.
+7. Sends retrieved context to `gpt-4o-mini`.
+8. Returns the answer with simple source labels such as `Page 1`.
+
+## Setup
+
+Install dependencies:
 `pip install -r requirements.txt`
 
-## Environment Setup
-
-Create a `.env` file with your OpenAI API key:
+Create `.env` with:
 `open_api_key=your_key_here`
-The script reads this value during startup.
 
-## Important Notes
+If you plan to use `image_extract.py`, make sure Tesseract is installed and available at:
+`/opt/homebrew/bin/tesseract`
 
-The OCR source folder is hard-coded in `RAG.py` as `/Users/mubaraq/Downloads/Deloitte`.
-The Tesseract binary path is also hard-coded for Apple Silicon at `/opt/homebrew/bin/tesseract`.
-If either path is different on your machine, update the script before running it.
-The vector database persists locally inside `chrome_db`.
+## Usage
 
-## Running The Project
-
-Run the script from the repository root:
+Run the retrieval app from the repo root:
 `python RAG.py`
-When prompted, enter a question about the ingested document set.
 
-## Current Limitations
+You will be prompted for a question, and the script will answer from the JSON-backed dataset.
 
-The code is still procedural and marked for future OOP refactoring.
-Metadata is not yet attached to stored chunks.
-The image loader only returns the first five files in the selected directory.
-The script assumes local OCR input files already exist.
-Error handling and configuration management are minimal.
+To experiment with OCR extraction separately, update the placeholder path in `image_extract.py` and run:
+`python image_extract.py`
 
-## Suggested Next Steps
+## Important Behavior
 
-Parameterize paths, improve chunk metadata, and separate ingestion from querying.
+If `chrome_db/` already exists, `RAG.py` reuses the existing embeddings instead of rebuilding them.
+If `main_data.json` changes, remove `chrome_db/` before rerunning so the vector store reflects the new data.
+The current source labels are generated from JSON entry order, not verified original document pages.
+
+## Limitations
+
+- The OCR helper and retrieval app are not yet wired into one end-to-end pipeline.
+- `image_extract.py` only processes the first five files in the target folder.
+- `RAG.py` assumes `main_data.json` already exists and is correctly formatted.
+- Configuration is still hard-coded in a few places.
+- There are no automated tests in the repository yet.
+
+## Next Improvements
+
+Unify OCR output with JSON generation, parameterize paths, and refactor the retrieval flow into cleaner modules or classes.

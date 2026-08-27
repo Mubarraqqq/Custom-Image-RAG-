@@ -5,8 +5,8 @@ from pillow_heif import register_heif_opener
 register_heif_opener()
 
 # Add this line (this is the default path for Apple Silicon Macs)
-pytesseract.pytesseract.tesseract_cmd = '/opt/homebrew/bin/tesseract'
-
+#pytesseract.pytesseract.tesseract_cmd = '/opt/homebrew/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
 def images_list_obj(doc):
     img_list_obj = []
     for i in os.listdir(doc):

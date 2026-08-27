@@ -10,3 +10,6 @@ langchain_openai
 rank-bm25
 langchain 
 langchain-classic
+flask
+langchain_chroma
+flask_cors

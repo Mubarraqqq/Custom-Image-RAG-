@@ -4,7 +4,7 @@ import json
 
 from openai import OpenAI
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from dotenv import load_dotenv
 from langchain_openai import OpenAIEmbeddings
@@ -15,10 +15,8 @@ from langchain_classic.retrievers import EnsembleRetriever # reciprocal rank fus
 
 
 load_dotenv()
-secret_key = os.getenv("open_api_key")
+secret_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=secret_key)
-
-
 
 PERSIST_DIR = "./chrome_db"
 
@@ -89,7 +87,7 @@ def retrieve_and_reason(query, retrieve):
     return final_answer
 
 
-print(retrieve_and_reason(input(str('Input Prompt: ')),final_retrieval))
+#print(retrieve_and_reason(input(str('Input Prompt: ')),final_retrieval))
 
 
 # CONVERT TO OOP !!

@@ -15,7 +15,7 @@ from langchain_classic.retrievers import EnsembleRetriever # reciprocal rank fus
 
 
 load_dotenv()
-secret_key = os.getenv("OPENAI_API_KEY")
+secret_key = os.getenv("OPENAI_API_KEY") 
 client = OpenAI(api_key=secret_key)
 
 PERSIST_DIR = "./chrome_db"
@@ -24,6 +24,11 @@ PERSIST_DIR = "./chrome_db"
 # This is heavily customed. 
 with open('main_data.json', 'r', encoding='utf-8') as file:
     data = json.load(file)
+
+
+
+
+
 
 # note, chunk is relative to existing json file. Tweak where necessary
 def chunk_and_embed(doc, embed_model):
